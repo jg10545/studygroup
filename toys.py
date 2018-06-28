@@ -52,6 +52,9 @@ def prepare_embedding_metadata(ds, logdir, spritesize=50):
     
     
 def add_conv_histograms():
+    """
+    Add tensorboard histograms for all your convolution weights
+    """
     tensors = [x for x in tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES)
              if "conv" in x.name]
     for t in tensors:
@@ -60,6 +63,17 @@ def add_conv_histograms():
         
         
 def generate_embedding_op(vec, N, spritesize=50):
+    """
+    Add a Variable to the graph to store embeddings for some of your data points.
+    
+    :vec: tensor in your graph that outputs embedded vectors
+    :N: number of data points you're storing
+    :spritesize: number of pixels for your sprites
+    
+    Returns
+    :store_embeddings: graph op to update your embedding vector
+    :config: projector config
+    """
     embed_dummy = tf.get_variable("dense_embeddings", shape=[N, vec.get_shape().as_list()[1]],
                               initializer=tf.initializers.random_uniform())
     store_embeddings = tf.assign(embed_dummy, vec)
